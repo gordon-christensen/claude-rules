@@ -61,8 +61,7 @@ Two scripts in `hooks/` (see each rule file for rationale). Wire in `settings.js
 {
   "hooks": {
     "PostToolUse": [
-      {"matcher": "*",
-       "hooks": [{"type": "command", "command": "python3 ~/.claude/rules/rutabaga-yoga/hooks/halt-reminder.py"}]}
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/rules/rutabaga-yoga/hooks/halt-reminder.py"}]}
     ],
     "Stop": [
       {"hooks": [{"type": "command", "command": "python3 ~/.claude/rules/rutabaga-yoga/hooks/turn-audit.py"}]}
