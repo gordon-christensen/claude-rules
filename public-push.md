@@ -56,7 +56,7 @@ then stop unconditionally; the user runs the commands:
 ⟦push-halt remote="<remote url>" branch=<branch> act=<push|pr|branch>⟧
 ```
 
-The same message reports: commit SHA(s), diff summary, and the exact `git push` /
+The same message reports: remote URL, branch name, commit SHA(s), diff summary, and the exact `git push` /
 `gh pr create` commands for the user, per "What Claude does instead" above. Do not
 execute, and do not poll for confirmation — the rule is unconditional.
 

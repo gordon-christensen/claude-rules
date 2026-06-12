@@ -14,6 +14,7 @@ None — transcript-native instrumentation; see Measurement.
 
 - Reads under on-demand trees:
   `grep -rl 'file_path":"[^"]*\.claude/on-demand/' ~/.claude/projects --include='*.jsonl' | wc -l`
+- Read count: `grep -rh 'file_path\":\"[^\"]*\.claude/on-demand/' ~/.claude/projects --include='*.jsonl' | wc -l` — reproduces the reads half of the baseline.
 - v1 baseline: 81 sessions / 439 reads.
 - Under-loading is the failure mode and is not mechanically detectable; sample sessions
   touching institution topics for missing loads.

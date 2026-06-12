@@ -39,6 +39,7 @@ marker's firing rules and its other fields):
 - Wanting to act beyond the declared `scope` mid-action means stop and re-emit the gate —
   never silently widen.
 - One gate may cover a batch of actions sharing a single scope declaration.
+- The `...` in the template stand for the authorization-owned fields (`tools=`, `risk=`) — never emit literal `...`; see authorization.md for the full field list.
 
 ## Measurement
 

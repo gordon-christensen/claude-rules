@@ -29,8 +29,10 @@ None — transcript-native instrumentation; see Measurement.
 ## Measurement
 
 - Attribution (target 0, any hit = violation):
-  `grep -ro 'Co-Authored-By: Claude\|Generated with \[Claude Code\]' ~/.claude/projects --include='*.jsonl'`
-  filtered to Bash tool_input (commit/PR commands).
+  `grep -ro 'Co-Authored-By: Claude\|Generated with \[*Claude Code\]*' ~/.claude/projects --include='*.jsonl'`
+  — the pattern catches bracketed and unbracketed forms; results MUST be filtered to Bash
+  tool_input (commit/PR commands) before counting: transcripts legitimately contain these
+  strings in rule text and review discussion.
 - Diagrams: fenced `plantuml` vs `mermaid` blocks in Write/Edit tool_input for new docs —
   new-mermaid count should be 0.
 

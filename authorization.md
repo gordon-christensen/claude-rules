@@ -63,7 +63,7 @@ Continue to completion without checking in mid-task. The user can interrupt at a
 - Do not pause for confirmation at intermediate steps. The Pre-Execution Review rules govern when concerns warrant pausing; routine progress updates do not.
 - If an error or unexpected situation arises mid-task, follow [errors.md](errors.md).
 
-Long-Running Tasks intentionally does *not* have a pre-send compliance marker. Adding one would create the noise the rule is designed to prevent. The check is behavioral: if you're tempted to ask "should I continue?" mid-task with no new concerns and no error, that's the rule firing — don't ask, just continue.
+Long-Running Tasks intentionally does *not* have a compliance marker. Adding one would create the noise the rule is designed to prevent. The check is behavioral: if you're tempted to ask "should I continue?" mid-task with no new concerns and no error, that's the rule firing — don't ask, just continue.
 
 ### Security floor
 
@@ -85,7 +85,8 @@ Authorization owns the `⟦gate⟧` marker's firing rules and two of its fields
 - `risk` — `routine` (reversible, local) | `irreversible` (hard to undo: deletes,
   overwrites of unread files, history rewrites) | `external` (leaves the machine or the
   org boundary: posts, publishes, sends). `irreversible` and `external` require the
-  concern to be named and resolved on the record before the gate fires.
+  concern to be named and resolved on the record before the gate fires. When both
+  `irreversible` and `external` apply, use `external`.
 - An unresolved concern means: no gate, no action — surface and wait.
 
 Event marker for ambiguous requests:
