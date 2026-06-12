@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""PostToolUse hook: inject errors.md halt reminder when a tool result is an error.
+"""PostToolUseFailure hook: inject errors.md halt reminder when a tool call fails.
 
-Conservative predicate (explicit error flags only) — benign-vs-real classification
-stays with the model, per errors.md. Tune per-tool here if injections over/under-fire.
+PostToolUse fires only on success; tool failures fire PostToolUseFailure — every
+invocation of this hook IS a failed call, so no error predicate is needed on that
+event. The is_error fallback covers accidental wiring to PostToolUse. Benign-vs-real
+classification stays with the model, per errors.md.
 """
 import json
 import sys
@@ -20,10 +22,11 @@ def main() -> None:
         data = json.load(sys.stdin)
     except json.JSONDecodeError:
         return
-    if is_error(data.get("tool_response")):
+    if data.get("hook_event_name") == "PostToolUseFailure" \
+            or is_error(data.get("tool_response")):
         print(json.dumps({
             "hookSpecificOutput": {
-                "hookEventName": "PostToolUse",
+                "hookEventName": "PostToolUseFailure",
                 "additionalContext": (
                     "Tool result was an error. errors.md applies - classify it; if it "
                     "counts, emit ⟦halt tool=... err=\"...\"⟧ and stop. "

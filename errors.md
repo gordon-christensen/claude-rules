@@ -48,8 +48,8 @@ In the same message that observes a real error (per "What counts" above):
   calls only if the user can't decide without them.
 - One halt per root cause — a batch failing identically gets one marker naming the
   pattern, not three retries.
-- Hook support: `hooks/halt-reminder.py` (PostToolUse) injects a reminder whenever a tool
-  result is an error. Classification stays with the model — benign failures (no-match
+- Hook support: `hooks/halt-reminder.py` (PostToolUseFailure) injects a reminder whenever
+  a tool call fails. Classification stays with the model — benign failures (no-match
   greps, expected probes) are information, not halts.
 
 ## Measurement

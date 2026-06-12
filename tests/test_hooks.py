@@ -31,6 +31,15 @@ GOOD_VERIFY = "⟦verify claims=1 cited=1 pw=0⟧"
 GATE = "⟦gate tools=edit scope=\"x\" excluded=none risk=routine⟧"
 
 class HaltReminderTest(unittest.TestCase):
+    def test_failure_event_always_injects(self):
+        # PostToolUseFailure = every invocation is a failed call; no flag needed
+        rc, out = run_hook(HALT, {"hook_event_name": "PostToolUseFailure", "tool_name": "Bash",
+                                  "tool_input": {},
+                                  "tool_response": {"stdout": "", "stderr": "boom"}})
+        self.assertEqual(rc, 0)
+        body = json.loads(out)
+        self.assertIn("errors.md", body["hookSpecificOutput"]["additionalContext"])
+
     def test_error_response_injects_context(self):
         rc, out = run_hook(HALT, {"hook_event_name": "PostToolUse", "tool_name": "Bash",
                                   "tool_input": {}, "tool_response": {"is_error": True}})
