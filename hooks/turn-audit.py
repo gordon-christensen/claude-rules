@@ -20,8 +20,22 @@ def strip_fences(s):
     return FENCE_RE.sub("", s)
 
 
+def content_blocks(evt):
+    """Message content normalized to a block list (real transcripts may store
+    user message content as a plain string)."""
+    content = (evt.get("message") or {}).get("content")
+    if isinstance(content, str):
+        return [{"type": "text", "text": content}]
+    return content or []
+
+
 def last_turn_blocks(path):
-    """Content blocks of assistant messages since the last real user message."""
+    """Content blocks of assistant messages since the last real user message.
+
+    Injected meta events (hook feedback, harness reminders) appear as user-type
+    events with isMeta set — they are noise inside a logical turn, not turn
+    boundaries, and must not fragment the audited span.
+    """
     events = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
@@ -35,14 +49,16 @@ def last_turn_blocks(path):
         if etype == "assistant":
             turn.append(evt)
         elif etype == "user":
-            content = (evt.get("message") or {}).get("content") or []
+            if evt.get("isMeta"):
+                continue
+            content = content_blocks(evt)
             is_tool_result = any(isinstance(b, dict) and b.get("type") == "tool_result"
                                  for b in content)
             if not is_tool_result:
                 break
     blocks = []
     for evt in reversed(turn):
-        blocks.extend((evt.get("message") or {}).get("content") or [])
+        blocks.extend(content_blocks(evt))
     return blocks
 
 

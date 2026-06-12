@@ -21,6 +21,12 @@ def assistant(blocks):
 def user_text(text):
     return {"type": "user", "message": {"content": [{"type": "text", "text": text}]}}
 
+def user_string(text, meta=False):
+    evt = {"type": "user", "message": {"content": text}}
+    if meta:
+        evt["isMeta"] = True
+    return evt
+
 GOOD_VERIFY = "⟦verify claims=1 cited=1 pw=0⟧"
 GATE = "⟦gate tools=edit scope=\"x\" excluded=none risk=routine⟧"
 
@@ -98,6 +104,26 @@ class TurnAuditTest(unittest.TestCase):
                        {"type": "tool_use", "name": "Edit", "input": {}},
                        {"type": "text", "text": "done " + GOOD_VERIFY}])])
         self.assertEqual(out.strip(), "")
+
+    def test_meta_event_does_not_fragment_turn(self):
+        # gate emitted, then an injected meta event (hook feedback / reminder),
+        # then the Edit: the meta event must not break the span — gate still counts
+        rc, out = self._run([user_text("q"),
+            assistant([{"type": "text", "text": GATE}]),
+            user_string("PostToolUse hook blocking error: ...", meta=True),
+            assistant([{"type": "tool_use", "name": "Edit", "input": {}},
+                       {"type": "text", "text": "done " + GOOD_VERIFY}])])
+        self.assertEqual(out.strip(), "")
+
+    def test_string_content_user_message_is_boundary(self):
+        # a real user message stored as a plain string ends the turn: the gate
+        # before it is out of scope, so the Edit after it must block
+        rc, out = self._run([user_text("q"),
+            assistant([{"type": "text", "text": GATE}]),
+            user_string("a real user instruction"),
+            assistant([{"type": "tool_use", "name": "Edit", "input": {}},
+                       {"type": "text", "text": "done " + GOOD_VERIFY}])])
+        self.assertEqual(json.loads(out)["decision"], "block")
 
     def test_stop_hook_active_exits_silently(self):
         rc, out = self._run([user_text("q"),
