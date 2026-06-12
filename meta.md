@@ -4,8 +4,8 @@
 
 ### Canonical edit areas
 
-The two canonical areas are `~/rules/behavior/` (this tree — loaded via the symlink
-`~/.claude/rules/behavior`) and `~/.claude/on-demand/{institution}/`. Treat edits to them
+The two canonical areas are `~/.claude/rules/rutabaga-yoga/` (this tree) and
+`~/.claude/on-demand/{institution}/`. Treat edits to them
 with the gravity of production config.
 
 - **Never create or update the global `~/.claude/CLAUDE.md`.**
@@ -28,8 +28,9 @@ Each institution gets its own subdirectory under `~/.claude/on-demand/`:
 
 The `README.md` at the root of the institution tree **must** define the institution — what organization it represents and what scope of knowledge belongs under it. This definition is the anchor for the institution self-check below.
 
-`~/rules/behavior` can exist without any institution tree. An institution on-demand tree
-must not exist without `~/rules/behavior` — the rules define the operating framework.
+`~/.claude/rules/rutabaga-yoga` can exist without any institution tree. An institution
+on-demand tree must not exist without `~/.claude/rules/rutabaga-yoga` — the rules define
+the operating framework.
 
 ### Capturing proprietary knowledge
 
@@ -65,7 +66,7 @@ identifiable institution = error halt per errors.md.
 ## Measurement
 
 - Emissions: `grep -roE '⟦(proposal|capture|institution) [^⟧]*⟧' ~/.claude/projects --include='*.jsonl'` by type.
-- Denominator: Edit/Write tool records with `file_path` under `~/.claude/` or under `~/rules/behavior/`.
+- Denominator: Edit/Write tool records with `file_path` under `~/.claude/`.
 - Violation query: such edits with no proposal/capture marker in the same session.
 - v1 baselines: 52 proposals / 17 sessions; 19 captures / 7 sessions; 20 institution / 19.
 
