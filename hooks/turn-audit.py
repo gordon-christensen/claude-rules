@@ -63,21 +63,33 @@ def last_turn_blocks(path):
 
 
 def audit(blocks):
-    problems = []
-    text = " ".join(b.get("text", "") for b in blocks
-                    if isinstance(b, dict) and b.get("type") == "text")
-    text = strip_fences(text)
+    """Returns (blocking, advisory) problem lists.
+
+    Real transcripts are unreliable for prose: an interrupted turn's text
+    blocks may be absent from the main line while its tool_use events are
+    present (observed 2026-06-12). Therefore gate-ordering findings are
+    advisory only, and verify findings block only when the turn's final
+    text block actually landed (last block is text).
+    """
+    blocking = []
+    advisory = []
+    texts = [b for b in blocks if isinstance(b, dict) and b.get("type") == "text"]
+    if not texts:
+        return blocking, advisory  # nothing auditable landed in the transcript
+    last_is_text = isinstance(blocks[-1], dict) and blocks[-1].get("type") == "text"
+    text = strip_fences(" ".join(b.get("text", "") for b in texts))
     m = list(VERIFY_RE.finditer(text))
     if not m:
-        problems.append("missing ⟦verify⟧ marker - emit it (verification.md)")
+        if last_is_text:
+            blocking.append("missing ⟦verify⟧ marker - emit it (verification.md)")
     else:
         claims, cited, pw = (int(x) for x in m[-1].groups())
         prose_len = len(VERIFY_RE.sub("", text).strip())
         if cited != claims - pw:
-            problems.append(
+            blocking.append(
                 f"verify arithmetic broken: cited={cited} != claims={claims} - pw={pw}")
         if claims == 0 and prose_len > PROSE_THRESHOLD:
-            problems.append(
+            blocking.append(
                 "claims=0 on a substantive reply - recount per verification.md zero-count recheck")
     gate_seen = False
     for b in blocks:
@@ -87,10 +99,10 @@ def audit(blocks):
             gate_seen = True
         elif b.get("type") == "tool_use" and b.get("name") in STATE_TOOLS:
             if not gate_seen:
-                problems.append(
+                advisory.append(
                     f"state-changing tool {b.get('name')} with no preceding ⟦gate⟧ (authorization.md)")
                 continue
-    return problems
+    return blocking, advisory
 
 
 def main() -> None:
@@ -107,9 +119,22 @@ def main() -> None:
         blocks = last_turn_blocks(path)
     except OSError:
         return
-    problems = audit(blocks)
-    if problems:
-        print(json.dumps({"decision": "block", "reason": "; ".join(problems)}))
+    blocking, advisory = audit(blocks)
+    if blocking:
+        reason = "; ".join(blocking)
+        if advisory:
+            reason += " | advisory: " + "; ".join(advisory)
+        print(json.dumps({"decision": "block", "reason": reason}))
+    elif advisory:
+        print(json.dumps({
+            "hookSpecificOutput": {
+                "hookEventName": "Stop",
+                "additionalContext": (
+                    "Advisory (transcript prose can lag/branch; not blocking): "
+                    + "; ".join(advisory)
+                ),
+            }
+        }))
 
 
 if __name__ == "__main__":

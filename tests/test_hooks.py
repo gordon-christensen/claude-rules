@@ -92,11 +92,28 @@ class TurnAuditTest(unittest.TestCase):
             assistant([{"type": "text", "text": "a ⟦verify claims=3 cited=1 pw=0⟧"}])])
         self.assertEqual(json.loads(out)["decision"], "block")
 
-    def test_state_tool_without_gate_blocks(self):
+    def test_state_tool_without_gate_advises(self):
+        # gate findings are advisory (transcript prose can lag/branch); no block
         rc, out = self._run([user_text("q"),
             assistant([{"type": "tool_use", "name": "Edit", "input": {}},
                        {"type": "text", "text": "done " + GOOD_VERIFY}])])
-        self.assertEqual(json.loads(out)["decision"], "block")
+        body = json.loads(out)
+        self.assertNotIn("decision", body)
+        self.assertIn("no preceding ⟦gate⟧",
+                      body["hookSpecificOutput"]["additionalContext"])
+
+    def test_tool_only_span_silent(self):
+        # no text blocks landed: nothing auditable — stay silent
+        rc, out = self._run([user_text("q"),
+            assistant([{"type": "tool_use", "name": "Edit", "input": {}}])])
+        self.assertEqual(out.strip(), "")
+
+    def test_missing_verify_trailing_tool_silent(self):
+        # final message not landed (last block is tool_use): no missing-verify block
+        rc, out = self._run([user_text("q"),
+            assistant([{"type": "text", "text": "working on it"},
+                       {"type": "tool_use", "name": "Bash", "input": {}}])])
+        self.assertEqual(out.strip(), "")
 
     def test_state_tool_with_gate_passes(self):
         rc, out = self._run([user_text("q"),
@@ -117,13 +134,16 @@ class TurnAuditTest(unittest.TestCase):
 
     def test_string_content_user_message_is_boundary(self):
         # a real user message stored as a plain string ends the turn: the gate
-        # before it is out of scope, so the Edit after it must block
+        # before it is out of scope, so the Edit after it draws the advisory
         rc, out = self._run([user_text("q"),
             assistant([{"type": "text", "text": GATE}]),
             user_string("a real user instruction"),
             assistant([{"type": "tool_use", "name": "Edit", "input": {}},
                        {"type": "text", "text": "done " + GOOD_VERIFY}])])
-        self.assertEqual(json.loads(out)["decision"], "block")
+        body = json.loads(out)
+        self.assertNotIn("decision", body)
+        self.assertIn("no preceding ⟦gate⟧",
+                      body["hookSpecificOutput"]["additionalContext"])
 
     def test_stop_hook_active_exits_silently(self):
         rc, out = self._run([user_text("q"),
@@ -146,7 +166,10 @@ class TurnAuditTest(unittest.TestCase):
             assistant([{"type": "text", "text": gate_in_fence},
                        {"type": "tool_use", "name": "Edit", "input": {}},
                        {"type": "text", "text": "done ⟦verify claims=1 cited=1 pw=0⟧"}])])
-        self.assertEqual(json.loads(out)["decision"], "block")
+        body = json.loads(out)
+        self.assertNotIn("decision", body)
+        self.assertIn("no preceding ⟦gate⟧",
+                      body["hookSpecificOutput"]["additionalContext"])
 
 if __name__ == "__main__":
     unittest.main()
