@@ -76,7 +76,7 @@ Authorization owns the `⟦gate⟧` marker's firing rules and two of its fields
 (scope.md owns `scope=`/`excluded=`):
 
 ```
-⟦gate tools=<edit|write|bash|mcp|agent[,...]> scope="..." excluded=... risk=<routine|irreversible|external>⟧
+⟦gate tools=<edit|write|bash|mcp|agent[,...]> scope="..." excluded=<"item, item"|none> risk=<routine|irreversible|external>⟧
 ```
 
 - Fires in the same message as the state-changing tool call(s), before them. One gate per

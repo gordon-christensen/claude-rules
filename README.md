@@ -27,6 +27,7 @@ One grep (`⟦`) finds every marker. Three value types, no free-text compliance 
 
 Values may not contain `⟧` or double quotes — paraphrase.
 Unquoted values may not contain spaces; comma-separate list members (e.g., `tools=edit,write`). Quoted (content) values may contain spaces and commas.
+`tools=` enum ↔ harness tool records: `edit`=Edit, `write`=Write/NotebookEdit, `bash`=Bash (state-changing), `mcp`=MCP write tools, `agent`=subagent dispatch.
 For `⟦verify⟧`, `cited = claims − pw` is a parseable invariant — hooks assert it.
 
 ### Recurring (the entire per-turn load)

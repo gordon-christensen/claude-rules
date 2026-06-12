@@ -28,7 +28,7 @@ Remediation requires platform-support intervention plus credential rotation for 
 For any change destined for a public-facing remote:
 
 1. Make the branch locally.
-2. Stage and commit per [pr-and-commits.md](pr-and-commits.md).
+2. Stage and commit per [pr-commits.md](pr-commits.md).
 3. Prepare the PR description.
 4. Report to the user: remote URL, branch name, commit SHA, summary of the diff, and the exact commands the user should run, e.g.
    ```

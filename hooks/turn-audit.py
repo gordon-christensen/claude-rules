@@ -13,6 +13,11 @@ PROSE_THRESHOLD = 600
 STATE_TOOLS = {"Edit", "Write", "NotebookEdit"}
 VERIFY_RE = re.compile(r"⟦verify claims=(\d+) cited=(\d+) pw=(\d+)⟧")
 GATE_RE = re.compile(r"⟦gate [^⟧]*⟧")
+FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
+
+
+def strip_fences(s):
+    return FENCE_RE.sub("", s)
 
 
 def last_turn_blocks(path):
@@ -45,12 +50,13 @@ def audit(blocks):
     problems = []
     text = " ".join(b.get("text", "") for b in blocks
                     if isinstance(b, dict) and b.get("type") == "text")
+    text = strip_fences(text)
     m = list(VERIFY_RE.finditer(text))
     if not m:
         problems.append("missing ⟦verify⟧ marker - emit it (verification.md)")
     else:
         claims, cited, pw = (int(x) for x in m[-1].groups())
-        prose_len = len(re.sub(r"```.*?```", "", VERIFY_RE.sub("", text), flags=re.DOTALL).strip())
+        prose_len = len(VERIFY_RE.sub("", text).strip())
         if cited != claims - pw:
             problems.append(
                 f"verify arithmetic broken: cited={cited} != claims={claims} - pw={pw}")
@@ -61,7 +67,7 @@ def audit(blocks):
     for b in blocks:
         if not isinstance(b, dict):
             continue
-        if b.get("type") == "text" and GATE_RE.search(b.get("text", "")):
+        if b.get("type") == "text" and GATE_RE.search(strip_fences(b.get("text", ""))):
             gate_seen = True
         elif b.get("type") == "tool_use" and b.get("name") in STATE_TOOLS:
             if not gate_seen:

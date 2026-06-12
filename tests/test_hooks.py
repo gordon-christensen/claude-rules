@@ -105,5 +105,22 @@ class TurnAuditTest(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertEqual(out.strip(), "")
 
+    def test_quoted_verify_in_fence_ignored(self):
+        # Real marker before fence; broken example inside fence must not be picked as last
+        text = ("real answer ⟦verify claims=1 cited=1 pw=0⟧ and an example:\n"
+                "```\n⟦verify claims=5 cited=1 pw=0⟧\n```")
+        rc, out = self._run([user_text("q"), assistant([{"type": "text", "text": text}])])
+        self.assertEqual(out.strip(), "")
+
+    def test_quoted_gate_in_fence_not_a_gate(self):
+        # Gate marker only inside fence — must not satisfy gate requirement for Edit
+        gate_in_fence = ("example:\n"
+                         "```\n⟦gate tools=edit scope=\"x\" excluded=none risk=routine⟧\n```")
+        rc, out = self._run([user_text("q"),
+            assistant([{"type": "text", "text": gate_in_fence},
+                       {"type": "tool_use", "name": "Edit", "input": {}},
+                       {"type": "text", "text": "done ⟦verify claims=1 cited=1 pw=0⟧"}])])
+        self.assertEqual(json.loads(out)["decision"], "block")
+
 if __name__ == "__main__":
     unittest.main()
