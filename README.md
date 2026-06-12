@@ -47,7 +47,7 @@ Example: `⟦gate tools=edit scope="fix null guard in parser.py" excluded=none r
 | `⟦uncertain type=intent\|factual plan=ask\|lookup⟧` | ambiguous request | authorization.md |
 | `⟦deviation rule=<rule-id> alt="..."⟧` | proposing a deviation | deviations.md |
 | `⟦push-halt remote="..." branch=... act=push\|pr\|branch⟧` | public-remote push intent | public-push.md |
-| `⟦counts ctx=N det=N test=N⟧` | PR/commit body drafted | pr-commits.md |
+| `⟦counts kind=initial\|followup ctx=N det=N test=N⟧` | PR/commit body drafted | pr-commits.md |
 | `⟦proposal file="..." change="..."⟧` | edit under ~/.claude/ proposed | meta.md |
 | `⟦capture inst=... area=... fact="..."⟧` | knowledge capture | meta.md |
 | `⟦institution detected=<name>\|none⟧` | proprietary content present | meta.md |
