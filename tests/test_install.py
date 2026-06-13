@@ -64,3 +64,12 @@ class TestIdempotentRerun(InstallTestBase):
         second = self.run_install()
         self.assertEqual(second.returncode, 0, second.stderr)
         self.assertTrue((self.install_dir / "verification.md").is_file())
+
+
+class TestHooksExecutable(InstallTestBase):
+    def test_hook_scripts_are_executable(self):
+        r = self.run_install()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        for name in ("halt-reminder.py", "turn-audit.py"):
+            p = self.install_dir / "hooks" / name
+            self.assertTrue(os.access(p, os.X_OK), f"{name} not executable")

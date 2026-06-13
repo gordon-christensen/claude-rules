@@ -10,3 +10,5 @@ if [ -d "$INSTALL_DIR/.git" ]; then
 else
   git clone --depth=1 "$REPO_URL" "$INSTALL_DIR"
 fi
+
+chmod +x "$INSTALL_DIR"/hooks/*.py
