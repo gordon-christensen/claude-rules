@@ -1,0 +1,29 @@
+gordon-christensen — Claude Code operating rules
+=================================================
+
+Install (or upgrade) with one command:
+
+    curl -fsSL https://raw.githubusercontent.com/gordon-christensen/claude-rules/main/install.sh | bash
+
+What it does
+------------
+- Clones the rules into ~/.claude/rules/gordon-christensen
+  (re-running pulls the latest main instead of re-cloning).
+- Marks the hook scripts executable.
+- Wires two hooks into ~/.claude/settings.json, preserving any
+  other settings you already have:
+    PostToolUseFailure -> hooks/halt-reminder.py
+    Stop               -> hooks/turn-audit.py
+
+Upgrade
+-------
+Re-run the one-liner above, or pull directly:
+
+    git -C ~/.claude/rules/gordon-christensen pull --ff-only
+
+After installing or upgrading, restart Claude Code so the rules
+and hooks take effect.
+
+Requirements
+------------
+git, python3, and curl (for the one-liner).
