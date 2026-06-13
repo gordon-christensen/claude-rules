@@ -55,3 +55,12 @@ class TestFreshClone(InstallTestBase):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertTrue((self.install_dir / "verification.md").is_file())
         self.assertTrue((self.install_dir / "hooks" / "halt-reminder.py").is_file())
+
+
+class TestIdempotentRerun(InstallTestBase):
+    def test_second_run_succeeds_and_keeps_files(self):
+        first = self.run_install()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        second = self.run_install()
+        self.assertEqual(second.returncode, 0, second.stderr)
+        self.assertTrue((self.install_dir / "verification.md").is_file())
