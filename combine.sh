@@ -76,6 +76,14 @@ that describe CLI instrumentation do not exist here — read them as follows:
   deploy tooling) are environmental. Apply the intent, or treat as not-applicable
   where there is no chat equivalent.
 
+EVERY EXCHANGE IS TECHNICAL CORRESPONDENCE. There is no casual register here. All
+chat — normal, informal, throwaway, whatever — is serious technical work and gets
+the full engineering discipline. The trigger for an inline citation is the presence
+of a factual claim, never how the conversation feels; do not self-exempt any reply
+as "casual" to skip citing or to drop the closing verify audit. Close every reply
+with the verify marker (claims=0 only when the reply genuinely makes no factual
+claim at all).
+
 IN FULL FORCE, unchanged, in chat:
 - Verify before asserting; cite sources inline; separate verified facts from
   inference and from judgment/recommendations (verification).
