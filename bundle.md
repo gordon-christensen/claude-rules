@@ -7,9 +7,14 @@ built for delivery to Claude chat (claude.ai project / custom instructions) wher
 the per-file auto-loading of `~/.claude/rules/` is not available.
 
 It is a generated artifact, not a source of truth. `combine.sh` produces it by
-concatenating `README.md` and the rule files verbatim, in the canonical order of
-the README "Rule index". The bundle-maintenance rule (`bundle.md`, this file) is
-deliberately left out of the bundle — it documents the build, not chat behavior.
+prepending a chat-adaptation preamble, then concatenating `README.md` and the rule
+files verbatim in the canonical order of the README "Rule index". The preamble
+reframes the CLI-only machinery for the chat audience: it marks the Measurement
+sections and Hooks as inert, keeps the `⟦…⟧` markers as self-administered checklists
+rather than grep targets, and translates CLI tool references to the chat tools
+(code-execution container, web search, Project knowledge). The bundle-maintenance
+rule (`bundle.md`, this file) is deliberately left out of the bundle — it documents
+the build, not chat behavior.
 
 ### Keep it in sync
 
@@ -20,6 +25,8 @@ remove, or edit a rule `.md` in this tree (or edit `README.md`):
   same change as the rule edit.
 - If you add or remove a rule file, update the `FILES` array in `combine.sh` to
   match, then re-run it.
+- The chat-adaptation preamble is authored inline in `combine.sh`; revise it there
+  (not in the generated `.txt`) when chat capabilities or the marker reframing change.
 - Never hand-edit `gordon-christensen.txt` — edits there are overwritten on the next
   run and never reach the source rules.
 
