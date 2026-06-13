@@ -4,7 +4,7 @@
 
 ### Canonical edit areas
 
-The two canonical areas are `~/.claude/rules/rutabaga-yoga/` (this tree) and
+The two canonical areas are `~/.claude/rules/gordon.christensen/` (this tree) and
 `~/.claude/on-demand/{institution}/`. Treat edits to them
 with the gravity of production config.
 
@@ -28,8 +28,8 @@ Each institution gets its own subdirectory under `~/.claude/on-demand/`:
 
 The `README.md` at the root of the institution tree **must** define the institution — what organization it represents and what scope of knowledge belongs under it. This definition is the anchor for the institution self-check below.
 
-`~/.claude/rules/rutabaga-yoga` can exist without any institution tree. An institution
-on-demand tree must not exist without `~/.claude/rules/rutabaga-yoga` — the rules define
+`~/.claude/rules/gordon.christensen` can exist without any institution tree. An institution
+on-demand tree must not exist without `~/.claude/rules/gordon.christensen` — the rules define
 the operating framework.
 
 ### Capturing proprietary knowledge

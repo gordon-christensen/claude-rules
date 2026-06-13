@@ -7,7 +7,7 @@ and its decay signal. Design: arpa `projects/behavior-rules/design.md`.
 ## Install
 
 ```
-git clone <remote> ~/.claude/rules/rutabaga-yoga
+git clone <remote> ~/.claude/rules/gordon.christensen
 ```
 
 Claude Code auto-loads every `.md` under `~/.claude/rules/`. Keep non-rule material
@@ -61,10 +61,10 @@ Two scripts in `hooks/` (see each rule file for rationale). Wire in `settings.js
 {
   "hooks": {
     "PostToolUseFailure": [
-      {"hooks": [{"type": "command", "command": "python3 ~/.claude/rules/rutabaga-yoga/hooks/halt-reminder.py"}]}
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/rules/gordon.christensen/hooks/halt-reminder.py"}]}
     ],
     "Stop": [
-      {"hooks": [{"type": "command", "command": "python3 ~/.claude/rules/rutabaga-yoga/hooks/turn-audit.py"}]}
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/rules/gordon.christensen/hooks/turn-audit.py"}]}
     ]
   }
 }
