@@ -87,3 +87,32 @@ class TestSettingsCreated(InstallTestBase):
             halt, f"python3 {self.install_dir}/hooks/halt-reminder.py")
         self.assertEqual(
             stop, f"python3 {self.install_dir}/hooks/turn-audit.py")
+
+
+class TestSettingsMerge(InstallTestBase):
+    def test_preserves_other_keys_and_overwrites_stale_hooks(self):
+        self.settings.write_text(json.dumps({
+            "model": "opus",
+            "permissions": {"defaultMode": "auto"},
+            "hooks": {
+                "Stop": [{"hooks": [{"type": "command",
+                                     "command": "python3 /old/turn-audit.py"}]}],
+                "PreToolUse": [{"hooks": [{"type": "command",
+                                           "command": "echo keep-me"}]}],
+            },
+        }, indent=2))
+        r = self.run_install()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        data = json.loads(self.settings.read_text())
+        # untouched top-level keys preserved
+        self.assertEqual(data["model"], "opus")
+        self.assertEqual(data["permissions"]["defaultMode"], "auto")
+        # unrelated hook preserved
+        self.assertEqual(
+            data["hooks"]["PreToolUse"][0]["hooks"][0]["command"], "echo keep-me")
+        # stale Stop hook overwritten to the new path
+        self.assertEqual(
+            data["hooks"]["Stop"][0]["hooks"][0]["command"],
+            f"python3 {self.install_dir}/hooks/turn-audit.py")
+        # PostToolUseFailure added
+        self.assertIn("PostToolUseFailure", data["hooks"])
