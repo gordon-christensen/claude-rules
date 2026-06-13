@@ -73,3 +73,17 @@ class TestHooksExecutable(InstallTestBase):
         for name in ("halt-reminder.py", "turn-audit.py"):
             p = self.install_dir / "hooks" / name
             self.assertTrue(os.access(p, os.X_OK), f"{name} not executable")
+
+
+class TestSettingsCreated(InstallTestBase):
+    def test_creates_settings_with_both_hooks(self):
+        self.assertFalse(self.settings.exists())
+        r = self.run_install()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        data = json.loads(self.settings.read_text())
+        halt = data["hooks"]["PostToolUseFailure"][0]["hooks"][0]["command"]
+        stop = data["hooks"]["Stop"][0]["hooks"][0]["command"]
+        self.assertEqual(
+            halt, f"python3 {self.install_dir}/hooks/halt-reminder.py")
+        self.assertEqual(
+            stop, f"python3 {self.install_dir}/hooks/turn-audit.py")
